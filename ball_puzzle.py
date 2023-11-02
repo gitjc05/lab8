@@ -3,28 +3,33 @@ import cs_stack as stack
 import string
 
 
-def move_ball(can1, can2, can_list):
-    ball_puzzle_animation.animate_move(stack_list=can_list, from_can=can1, to_can=can2)
-    ball = stack.pop(can1)
-    return can1, stack.push(can2, ball)
+def move_ball(cans, can1, can2):
+    ball = stack.pop(cans[can1])
+    stack.push(cans[can2], ball)
+    ball_puzzle_animation.animate_move(stack_list=cans, from_can=can1, to_can=can2)
+    return cans
 
 
 def sort_cans(cans):
+    moves = 0
     
     while stack.size(cans[0]) > 0:
         if stack.top(cans[0]) == "G":
-            cans[0], cans[1] = move_ball(cans, cans[0], cans[1])
+            cans = move_ball(cans, 0, 1)
         else:
-            cans[0], cans[2] = move_ball(cans, cans[0], cans[2])
+            cans = move_ball(cans, 0, 2)
+        moves += 1
     while stack.size(cans[2]) > 0:
-        if stack.top(cans[0]) == "R":
-            cans[2], cans[0] = move_ball(cans, cans[2], cans[0])
+        if stack.top(cans[2]) == "R":
+            cans = move_ball(cans, 2, 0)
         else:
-            cans[2], cans[1] = move_ball(cans, cans[2], cans[1])
+            cans = move_ball(cans, 2, 1)
+        moves += 1
     while stack.top(cans[1]) != "G":
-        cans[1], cans[2] = move_ball(cans, cans[1], cans[2])
+        cans = move_ball(cans, 1, 2)
+        moves += 1
 
-    return cans
+    return cans, moves
             
 
 def main():
@@ -40,7 +45,8 @@ def main():
         
     ball_puzzle_animation.animate_init(can1)
     
-    n_cans = sort_cans(cans_list)
+    n_cans, moves = sort_cans(cans_list)
+    print(moves)
     
     ball_puzzle_animation.animate_finish()
 
